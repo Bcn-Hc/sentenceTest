@@ -25,6 +25,9 @@
             padding-top: 7px;
             text-align: center;
         }
+        #isRandom{
+            margin-top: 10px;
+        }
 
         .search-right .search-date {
             float: left;
@@ -80,7 +83,10 @@
         </span>
     </div>
 
-    <div class="search-or col-sm-1">OR</div>
+    <div class="search-or col-sm-1">
+        OR
+        <div><input type="checkbox" id="isRandom" checked="checked"/>Random</div>
+    </div>
 
     <div class="search-right col-sm-5">
         <div>
@@ -185,6 +191,22 @@
     </div>
 </div>
 
+<!--the shuffle function-->
+<script type="text/javascript">
+    /**
+     * Shuffles array in place.
+     * @param {Array} a items The array containing the items.
+     */
+    function shuffle(a) {
+        var j, x, i;
+        for (i = a.length; i; i--) {
+            j = Math.floor(Math.random() * i);
+            x = a[i - 1];
+            a[i - 1] = a[j];
+            a[j] = x;
+        }
+    }
+</script>
 <script type="text/javascript">
     var curQuestions;
     function checkSingQuestion(i) {
@@ -204,6 +226,9 @@
     }
     function updateQuestion(data) {
         curQuestions = JSON.parse(data);
+        if($('#isRandom').is(':checked')){
+            shuffle(curQuestions);
+        }
         $('#question-list').html("");
         for (var i = 0; i < curQuestions.length; i++) {
             var tr = $("<tr id=\"question-" + i.toString() + "\"></tr>");

@@ -25,7 +25,8 @@
             padding-top: 7px;
             text-align: center;
         }
-        #isRandom{
+
+        #isRandom {
             margin-top: 10px;
         }
 
@@ -210,7 +211,9 @@
 <script type="text/javascript">
     var curQuestions;
     function checkSingQuestion(i) {
-        if ($("#mask-" + i).length==0 || $("#mask-" + i).val() == curQuestions[i]["answer"]) {
+        var maskRegexp = /\[([\S]+)]/g;
+        var matches = maskRegexp.exec(curQuestions[i]["content"]);
+        if ($("#mask-" + i).length == 0 || (matches.length > 1 && $("#mask-" + i).val() == matches[1])) {
             $("#question-" + i).removeClass('danger');
             $("#question-" + i).addClass('success');
         } else {
@@ -218,15 +221,16 @@
             $("#question-" + i).addClass('danger');
         }
         $($("#question-" + i).children()[3]).text(curQuestions[i]["answer"]);
+        //
     }
-    function checkAllQuestions(){
-        for(var i=0;i<curQuestions.length;++i) {
+    function checkAllQuestions() {
+        for (var i = 0; i < curQuestions.length; ++i) {
             checkSingQuestion(i);
         }
     }
     function updateQuestion(data) {
         curQuestions = JSON.parse(data);
-        if($('#isRandom').is(':checked')){
+        if ($('#isRandom').is(':checked')) {
             shuffle(curQuestions);
         }
         $('#question-list').html("");
@@ -234,7 +238,7 @@
             var tr = $("<tr id=\"question-" + i.toString() + "\"></tr>");
             tr.append("<td>" + curQuestions[i]['sId'] + "</td>");
             tr.append("<td>" + curQuestions[i]['memo'] + "</td>");
-            var strQuest = curQuestions[i]['content'].replace("%s", " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
+            var strQuest = curQuestions[i]['content'].replace(/\[[\S]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
             tr.append("<td>" + strQuest + "</td>");
             //tr.append("<td>" + curQuestions[i]['answer'] + "</td>");
             tr.append("<td></td>");
@@ -249,43 +253,43 @@
         //press enter to next question
         //press tab to next question
         $('.mask').keydown(function (e) {
-            if (e.keyCode == 13) {
-                if (e.ctrlKey) {
-                    //press the ctrl+enter
-                    var id = $(this).attr("id");
-                    var arr_id = id.split("-");
-                    if (arr_id.length == 2) {
-                        checkSingQuestion(arr_id[1]);
+                if (e.keyCode == 13) {
+                    if (e.ctrlKey) {
+                        //press the ctrl+enter
+                        var id = $(this).attr("id");
+                        var arr_id = id.split("-");
+                        if (arr_id.length == 2) {
+                            checkSingQuestion(arr_id[1]);
+                        }
+                    } else {
+                        //only press the enter
+                        $(this).parent().parent().next().find('.mask').focus();
                     }
-                } else {
-                    //only press the enter
+                } else if (e.keyCode == 9) {
+                    //9 is the tab key
                     $(this).parent().parent().next().find('.mask').focus();
+                    e.preventDefault();
+                    return false;
                 }
-            } else if (e.keyCode == 9) {
-                //9 is the tab key
-                $(this).parent().parent().next().find('.mask').focus();
-                e.preventDefault();
-                return false;
             }
-        }
-    );
+        );
 
-    //click the edit button
-    $('.btn-edit').click(function () {
-        var index = $(this).attr('id').split('-')[1];
-        $('#edit-sId').text(curQuestions[index]['sId']);
-        $('#edit-memo').val(curQuestions[index]['memo']);
-        $('#edit-content').val(curQuestions[index]['content']);
-        $('#edit-answer').val(curQuestions[index]['answer']);
-        $('#edit-translation').val(curQuestions[index]['translation']);
-        $('#edit-tips').val(curQuestions[index]['tips']);
-        $('#save_info').hide();
-    });
+        //click the edit button
+        $('.btn-edit').click(function () {
+            var index = $(this).attr('id').split('-')[1];
+            $('#edit-sId').text(curQuestions[index]['sId']);
+            $('#edit-memo').val(curQuestions[index]['memo']);
+            $('#edit-content').val(curQuestions[index]['content']);
+            $('#edit-answer').val(curQuestions[index]['answer']);
+            $('#edit-translation').val(curQuestions[index]['translation']);
+            $('#edit-tips').val(curQuestions[index]['tips']);
+            $('#save_info').hide();
+        });
 
-    //click the check button
-    $('#btn_check').click(function(){
-        checkAllQuestions();
-    });
+        //click the check button
+        $('#btn_check').click(function () {
+            checkAllQuestions();
+        });
     }
 </script>
 <!--init the date information-->

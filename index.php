@@ -39,6 +39,10 @@
             clear: both;
         }
 
+        .pg-content{
+            padding-top: 100px;
+        }
+
         .splitter {
             margin-top: 50px;
             margin-bottom: 30px;

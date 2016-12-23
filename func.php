@@ -11,7 +11,7 @@ class sentenceInfo
     public $sId = null;
     public $memo = null;
     public $content = null;
-    public $answer=null;
+    public $answer = null;
     public $translation = null;
     public $tips = null;
     public $created_at = null;
@@ -138,6 +138,7 @@ class sentenceInfo
         $link->close();
         return $ret;
     }
+
     /**get collection*/
     public function getCollection($sql = null)
     {
@@ -291,3 +292,45 @@ function toCsvStr($arr)
     return $str;
 }
 
+function downLoad($url, &$errorInfo = null)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+    $data = curl_exec($ch);
+    $errorInfo = curl_error($ch);
+    curl_close($ch);
+    return $data;
+}
+
+function prepareFields($key)
+{
+    $page = downLoad("http://dict.hjenglish.com/jp/jc/".$key);
+    $translate="";
+    $pos_tran_begin = strpos($page, "<div class='simple_content mt10'>");
+    if ($pos_tran_begin !== false) {
+        $pos_tran_end = strpos($page, "</div>", $pos_tran_begin + 1);
+        $rawTranslate = substr($page, $pos_tran_begin, $pos_tran_end - $pos_tran_begin);
+        $translate = $str = preg_replace_callback("/<[^>]*>/", function ($match) {
+            return preg_replace("/<[^>]*>/", '', $match[0]);
+        }, $rawTranslate);
+    }
+
+    $kana="";
+    $pos_kana_begin = strpos($page, "<span id='kana_1' class='trs_jp bold' title='假名'>");
+    if ($pos_kana_begin !== false) {
+        $pos_kana_end = strpos($page, "</span>", $pos_kana_begin + 1);
+        $rawKana = substr($page, $pos_kana_begin, $pos_kana_end - $pos_kana_begin);
+        $kana = $str = preg_replace_callback("/<[^>]*>/", function ($match) {
+            return preg_replace("/<[^>]*>/", '', $match[0]);
+        }, $rawKana);
+    }
+
+    $kana=$key.$kana;
+    $translate=$key."：".$translate;
+    return "[{\"answer\":\"{$kana}\",\"tips\":\"{$translate}\"}]";
+}

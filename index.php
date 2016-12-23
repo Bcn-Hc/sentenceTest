@@ -39,7 +39,7 @@
             clear: both;
         }
 
-        .pg-content{
+        .pg-content {
             padding-top: 100px;
         }
 
@@ -64,6 +64,11 @@
         #save_info {
             text-align: center;
             display: none;
+        }
+
+        .auto-wrapper {
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -191,7 +196,11 @@
         </table>
         <div class="col-sm-12 alert alert-success" id="save_info"></div>
         <div class="check-wrapper col-sm-10 col-sm-offset-1">
-            <button type="button" class="btn btn-info" id="btn_ok">ok</button>
+            <button type="button" class="btn btn-info" id="btn-ok">ok</button>
+        </div>
+        <div class="auto-wrapper col-sm-10 col-sm-offset-1">
+            <input type="text" id="edit-key"/>
+            <button type="button" class="btn btn-info" id="btn-acquire">auto acquire</button>
         </div>
     </div>
 </div>
@@ -411,7 +420,7 @@
 
 <!--new or modify a record-->
 <script type="text/javascript">
-    $('#btn_ok').click(function () {
+    $('#btn-ok').click(function () {
         var params = [
             {
                 'sId': $('#edit-sId').text(),
@@ -466,5 +475,29 @@
     });
 </script>
 
+<!--auto acquire a record-->
+<script type="text/javascript">
+    $('#btn-acquire').click(function () {
+        function acquireFunc(data, textStatus, jqXHR) {
+            var jsonData = JSON.parse(data);
+            if (jsonData.length > 0) {
+                jQuery("#edit-answer").val(jsonData[0]['answer']);
+                jQuery("#edit-tips").val(jsonData[0]['tips']);
+            }
+        }
+
+        $.ajax({
+            url: "request.php",
+            type: "post",
+            data: {
+                action: 'acquireAction',
+                key: $('#edit-key').val()
+            },
+            success: acquireFunc,
+            datatype: "json"
+        });
+    });
+
+</script>
 </body>
 </html>

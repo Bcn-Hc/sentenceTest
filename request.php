@@ -67,4 +67,9 @@ switch ($_POST['action']) {
             }
         }
     }
+    case 'acquireAction':{
+        if (isset($_POST['key'])) {
+            echo prepareFields($_POST['key']);
+        }
+    }
 }

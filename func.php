@@ -189,6 +189,10 @@ class sentenceInfo
         }
 
         $today = date('Y-m-d');
+        $this->content = str_replace('【', '[', $this->content);
+        $this->content = str_replace('】', ']', $this->content);
+        $this->tips = str_replace('[', '【', $this->tips);
+        $this->tips = str_replace(']', '】', $this->tips);
         if (empty($this->sId)) {
             //new a record
             $link->query("insert into `sentenceinfo`(`memo`,`content`,`answer`,`translation`,`tips`,`created_at`,`updated_at`)
@@ -301,6 +305,7 @@ function downLoad($url, &$errorInfo = null)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.110 Safari/537.36');
     $data = curl_exec($ch);
     $errorInfo = curl_error($ch);
     curl_close($ch);
@@ -309,18 +314,41 @@ function downLoad($url, &$errorInfo = null)
 
 function prepareFields($key)
 {
-    $page = downLoad("http://dict.hjenglish.com/jp/jc/".$key);
-    $translate="";
+    $url = "http://dict.hjenglish.com/jp/jc/" . urlencode($key);
+    $page = downLoad($url);
+    $translate = "";
     $pos_tran_begin = strpos($page, "<div class='simple_content mt10'>");
     if ($pos_tran_begin !== false) {
         $pos_tran_end = strpos($page, "</div>", $pos_tran_begin + 1);
         $rawTranslate = substr($page, $pos_tran_begin, $pos_tran_end - $pos_tran_begin);
-        $translate = $str = preg_replace_callback("/<[^>]*>/", function ($match) {
+        $translate = preg_replace_callback("/<[^>]*>/", function ($match) {
             return preg_replace("/<[^>]*>/", '', $match[0]);
         }, $rawTranslate);
+    } else {
+        $pos_tran_begin = 0;//<div class='flag big_type tip_content_item'
+        while (($pos_tran_begin = strpos($page, "<div class='flag big_type tip_content_item'", $pos_tran_begin)) !== false) {
+            $pos_attr_begin = $pos_tran_begin;
+            $pos_attr_end = strpos($page, "</div>", $pos_attr_begin + 1);
+            $rawTranslate = substr($page, $pos_attr_begin, $pos_attr_end - $pos_attr_begin);
+            $translate .= preg_replace_callback("/<[^>]*>/", function ($match) {
+                return preg_replace("/<[^>]*>/", '', $match[0]);
+            }, $rawTranslate);
+
+            if (($pos_tran_begin = strpos($page, "<ul class='tip_content_item jp_definition_com'>", $pos_tran_begin)) !== false) {
+                $pos_meaning_begin = strpos($page, "<div", $pos_tran_begin + 1);
+                $pos_meaning_end = strpos($page, "</div>", $pos_meaning_begin + 1);
+                $rawTranslate = substr($page, $pos_meaning_begin, $pos_meaning_end - $pos_meaning_begin);
+                $translate .= preg_replace_callback("/<[^>]*>/", function ($match) {
+                    return preg_replace("/<[^>]*>/", '', $match[0]);
+                }, $rawTranslate);
+            }
+            $pos_tran_begin++;
+        }
+
+
     }
 
-    $kana="";
+    $kana = "";
     $pos_kana_begin = strpos($page, "<span id='kana_1' class='trs_jp bold' title='假名'>");
     if ($pos_kana_begin !== false) {
         $pos_kana_end = strpos($page, "</span>", $pos_kana_begin + 1);
@@ -330,7 +358,7 @@ function prepareFields($key)
         }, $rawKana);
     }
 
-    $kana=$key.$kana;
-    $translate=$key."：".$translate;
-    return "[{\"answer\":\"{$kana}\",\"tips\":\"{$translate}\"}]";
+    $kana = $key . $kana;
+    $translate = $key . "：" . $translate;
+    return "[{\"answer\":\"{$kana}\",\"tips\":\"{$translate}\",\"url\":\"{$url}\"}]";
 }

@@ -84,6 +84,7 @@
 					</span>
         </div>
         <span class="search-type">
+        <div><input type="checkbox" id="search-sIndex"/>sIndex</div>
         <div><input type="checkbox" id="search-sId"/>sId</div>
         <div><input type="checkbox" id="search-memo"/>memo</div>
         <div><input type="checkbox" id="search-content" checked="checked"/>content</div>
@@ -139,6 +140,7 @@
         <table class="table table-bordered">
             <thead>
             <tr>
+                <th>sInex</th>
                 <th>sId</th>
                 <th>memo</th>
                 <th>content</th>
@@ -168,6 +170,10 @@
             </tr>
             </thead>
             <tbody>
+            <tr>
+                <td><label>No</label></td>
+                <td><span type="text" id="edit-sId"/></span></td>
+            </tr>
             <tr>
                 <td><label>sId</label></td>
                 <td><span type="text" id="edit-sId"/></span></td>
@@ -233,7 +239,7 @@
             $("#question-" + i).removeClass('success');
             $("#question-" + i).addClass('danger');
         }
-        $($("#question-" + i).children()[3]).text(curQuestions[i]["answer"]);
+        $($("#question-" + i).children()[4]).text(curQuestions[i]["answer"]);
         //
     }
     function checkAllQuestions() {
@@ -247,8 +253,10 @@
             shuffle(curQuestions);
         }
         $('#question-list').html("");
+        var index = 1;
         for (var i = 0; i < curQuestions.length; i++) {
             var tr = $("<tr id=\"question-" + i.toString() + "\"></tr>");
+            tr.append("<td>" + (index++) + "</td>");
             tr.append("<td>" + curQuestions[i]['sId'] + "</td>");
             tr.append("<td>" + curQuestions[i]['memo'] + "</td>");
             var strQuest = curQuestions[i]['content'].replace(/\[[\S]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
@@ -483,6 +491,7 @@
             if (jsonData.length > 0) {
                 jQuery("#edit-answer").val(jsonData[0]['answer']);
                 jQuery("#edit-tips").val(jsonData[0]['tips']);
+                window.open(jsonData[0]['url']);
             }
         }
 
@@ -498,6 +507,13 @@
         });
     });
 
+
+    $('#edit-key').keydown(function (e) {
+            if (e.keyCode == 13) {
+                $('#btn-acquire').click();
+            }
+        }
+    );
 </script>
 </body>
 </html>

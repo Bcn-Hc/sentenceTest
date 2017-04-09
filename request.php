@@ -61,7 +61,7 @@ switch ($_POST['action']) {
                 $info->setTranslation($params['translation']);
                 $info->setTips($params['tips']);
                 $info->save();
-                echo  '[{"succeed":"succeed to save"}]';
+                echo  '[{"succeed":"succeed to save '.$info->getAnswer().'"}] ';
             } catch (Exception $e) {
                 echo "[{\"failed\":\"{$e->getMessage()}\"}]";
             }

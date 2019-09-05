@@ -53,10 +53,18 @@
             text-align: center;
         }
 
-        .table-edit input {
+        .table-edit td input {
             width: 100%;
         }
-
+        .tb-table{
+            display: table;
+        }
+        .full-width{
+            width: 100%;
+        }
+        .tb-cell{
+            display: table-cell;
+        }
         #btn_check {
             margin-right: 30px;
         }
@@ -77,7 +85,7 @@
     <div class="search-left col-sm-4 col-sm-offset-1 ">
         <div class="input-group">
             <input type="text" class="form-control" id="search-text"/>
-					<span class="input-group-btn">
+            <span class="input-group-btn">
 						<button class="btn btn-default" type="button" id="search-btn">
                             Go
                         </button>
@@ -178,11 +186,21 @@
             </tr>
             <tr>
                 <td><label>content</label></td>
-                <td><input type="text" id="edit-content"/></td>
+                <td>
+                    <div class="tb-table full-width">
+                        <div class="tb-cell full-width">
+                            <input type="text" id="edit-content"/>
+                        </div>
+                        <button class="btn btn-info btn-answer-auto" type="button"
+                                id="btn-answer-auto">Generate Answer</button>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <td><label>answer</label></td>
-                <td><input type="text" id="edit-answer"/></td>
+                <td>
+                    <input type="text" id="edit-answer"/>
+                </td>
             </tr>
             <tr>
                 <td><label>translation</label></td>
@@ -435,6 +453,15 @@
 
 <!--new or modify a record-->
 <script type="text/javascript">
+    $('#btn-answer-auto').click(function () {
+        var str = $('#edit-content').val();
+        var patt = /\[([^\]]+)\]/i;
+        var result = str.match(patt);
+        if(result.length>=2){
+            $('#edit-answer').val(result[1]);
+        }
+
+    });
     $('#btn-ok').click(function () {
         var params = [
             {

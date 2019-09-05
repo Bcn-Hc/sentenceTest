@@ -258,7 +258,10 @@
             tr.append("<td>" + curQuestions[i]['translation'] + "</td>");
             tr.append("<td>" + curQuestions[i]['tips'] + "</td>");
             tr.append("<td>" + curQuestions[i]['created_at'] + "</td>");
-            tr.append("<td><button type=\"button\" class=\"btn btn-info btn-edit\" id=\"edit-" + i.toString() + "\">Edit</button></td>");
+            tr.append("<td>" +
+                "<button type=\"button\" class=\"btn btn-info btn-edit\" id=\"edit-" + i.toString() + "\">Edit</button>" +
+                " <button type=\"button\" class=\"btn btn-info btn-copy\" id=\"copy-" + i.toString() + "\">Copy</button>" +
+                "</td>");
             $('#question-list').append(tr);
         }
 
@@ -291,6 +294,18 @@
         $('.btn-edit').click(function () {
             var index = $(this).attr('id').split('-')[1];
             $('#edit-sId').text(curQuestions[index]['sId']);
+            $('#edit-memo').val(curQuestions[index]['memo']);
+            $('#edit-content').val(curQuestions[index]['content']);
+            $('#edit-answer').val(curQuestions[index]['answer']);
+            $('#edit-translation').val(curQuestions[index]['translation']);
+            $('#edit-tips').val(curQuestions[index]['tips']);
+            $('#save_info').hide();
+        });
+
+        //click the copy button
+        $('.btn-copy').click(function () {
+            var index = $(this).attr('id').split('-')[1];
+            $('#edit-sId').text("");
             $('#edit-memo').val(curQuestions[index]['memo']);
             $('#edit-content').val(curQuestions[index]['content']);
             $('#edit-answer').val(curQuestions[index]['answer']);

@@ -242,7 +242,7 @@
 <script type="text/javascript">
     var curQuestions;
     function checkSingQuestion(i) {
-        var maskRegexp = /\[([\S]+)]/g;
+        var maskRegexp = /\[([^\]]+)]/g;
         var matches = maskRegexp.exec(curQuestions[i]["content"]);
         if ($("#mask-" + i).length == 0 || (matches.length > 1 && $("#mask-" + i).val() == matches[1])) {
             $("#question-" + i).removeClass('danger');
@@ -269,7 +269,7 @@
             var tr = $("<tr id=\"question-" + i.toString() + "\"></tr>");
             tr.append("<td>" + curQuestions[i]['sId'] + "</td>");
             tr.append("<td>" + curQuestions[i]['memo'] + "</td>");
-            var strQuest = curQuestions[i]['content'].replace(/\[[\S]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
+            var strQuest = curQuestions[i]['content'].replace(/\[[^\]]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
             tr.append("<td>" + strQuest + "</td>");
             //tr.append("<td>" + curQuestions[i]['answer'] + "</td>");
             tr.append("<td></td>");

@@ -151,8 +151,8 @@
                 <th>sId</th>
                 <th>memo</th>
                 <th>content</th>
-                <th>answer</th>
                 <th>translation</th>
+                <th>answer</th>
                 <th>tips</th>
                 <th>created_at</th>
                 <th>edit</th>
@@ -252,7 +252,7 @@
             $("#question-" + i).removeClass('success');
             $("#question-" + i).addClass('danger');
         }
-        $($("#question-" + i).children()[3]).text(curQuestions[i]["answer"]);
+        $($("#question-" + i).children()[4]).text(curQuestions[i]["answer"]);
         //
     }
     function checkAllQuestions() {
@@ -272,9 +272,9 @@
             tr.append("<td>" + curQuestions[i]['memo'] + "</td>");
             var strQuest = curQuestions[i]['content'].replace(/\[[^\]]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
             tr.append("<td>" + strQuest + "</td>");
+            tr.append("<td>" + curQuestions[i]['translation'] + "</td>");
             //tr.append("<td>" + curQuestions[i]['answer'] + "</td>");
             tr.append("<td></td>");
-            tr.append("<td>" + curQuestions[i]['translation'] + "</td>");
             tr.append("<td>" + curQuestions[i]['tips'] + "</td>");
             tr.append("<td>" + curQuestions[i]['created_at'] + "</td>");
             tr.append("<td>" +

@@ -482,7 +482,8 @@
                     $('#save_info').show();
                     $('#save_info').removeClass('alert-danger');
                     $('#save_info').addClass('alert-success');
-                    $('#save_info').text(jsonData[0]['succeed']);
+                    $('#save_info').text(jsonData[0]['succeed']['message']);
+                    $('#edit-sId').text(jsonData[0]['succeed']['id']);
                 } else if (typeof jsonData[0]['failed'] !== 'undefined') {
                     $('#save_info').show();
                     $('#save_info').removeClass('alert-success');

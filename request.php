@@ -61,13 +61,16 @@ switch ($_POST['action']) {
                 $info->setTranslation($params['translation']);
                 $info->setTips($params['tips']);
                 $info->save();
-                echo  '[{"succeed":"succeed to save"}]';
+                $result = [
+                    'succeed' => ['message' => 'succeed to save', 'id' => $info->getId()]
+                ];
+                echo '['.json_encode($result).']';
             } catch (Exception $e) {
                 echo "[{\"failed\":\"{$e->getMessage()}\"}]";
             }
         }
     }
-    case 'acquireAction':{
+    case 'acquireAction': {
         if (isset($_POST['key'])) {
             echo prepareFields($_POST['key']);
         }

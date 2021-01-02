@@ -39,7 +39,10 @@
         .clear {
             clear: both;
         }
-
+        #from-date-ul{
+            max-height: 500px;
+            overflow: hidden;
+        }
         .pg-content {
             padding-top: 100px;
         }

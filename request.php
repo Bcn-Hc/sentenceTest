@@ -10,7 +10,7 @@ require_once 'func.php';
 switch ($_POST['action']) {
     case 'getDateList': {
         $info = new sentenceInfo();
-        $result = $info->select('select distinct `created_at` from `sentenceinfo` order by `created_at` asc;');
+        $result = $info->select('select distinct `created_at` from `sentenceinfo` order by `created_at` desc;');
         echo json_encode($result);
         break;
     }

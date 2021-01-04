@@ -196,7 +196,7 @@ values ('{$this->memo}','{$this->content}','{$this->answer}','{$this->translatio
             $this->sId = $link->insert_id;
         } else {
             //update a existing record
-            $link->query("update `sentenceinfo` set `memo`='{$this->memo}',`content`='{$this->content}',`answer`='{$this->answer}',`tips`='{$this->tips}',`updated_at`='{$this->updated_at}' where `sId`={$this->sId}");
+            $link->query("update `sentenceinfo` set `memo`='{$this->memo}',`content`='{$this->content}',`answer`='{$this->answer}',`translation`='{$this->translation}',`tips`='{$this->tips}',`updated_at`='{$this->updated_at}' where `sId`={$this->sId}");
         }
         //close
         $link->close();

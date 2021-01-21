@@ -10,7 +10,7 @@ require_once 'func.php';
 switch ($_POST['action']) {
     case 'getDateList': {
         $info = new sentenceInfo();
-        $result = $info->select('select distinct `created_at` from `sentenceinfo` order by `created_at` asc;');
+        $result = $info->select('select distinct `created_at` from `sentenceinfo` order by `created_at` desc;');
         echo json_encode($result);
         break;
     }
@@ -61,13 +61,16 @@ switch ($_POST['action']) {
                 $info->setTranslation($params['translation']);
                 $info->setTips($params['tips']);
                 $info->save();
-                echo  '[{"succeed":"succeed to save '.$info->getAnswer().'"}] ';
+                $result = [
+                    'succeed' => ['message' => 'succeed to save', 'id' => $info->getId()]
+                ];
+                echo '['.json_encode($result).']';
             } catch (Exception $e) {
                 echo "[{\"failed\":\"{$e->getMessage()}\"}]";
             }
         }
     }
-    case 'acquireAction':{
+    case 'acquireAction': {
         if (isset($_POST['key'])) {
             echo prepareFields($_POST['key']);
         }

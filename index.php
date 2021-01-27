@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="font-src 'self' data:; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; default-src 'self'; ">
     <title></title>
     <script type="text/javascript" src="bootstrap/js/jquery.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
@@ -39,10 +38,7 @@
         .clear {
             clear: both;
         }
-        #from-date-ul{
-            max-height: 500px;
-            overflow: hidden;
-        }
+
         .pg-content {
             padding-top: 100px;
         }
@@ -57,18 +53,10 @@
             text-align: center;
         }
 
-        .table-edit td input {
+        .table-edit input {
             width: 100%;
         }
-        .tb-table{
-            display: table;
-        }
-        .full-width{
-            width: 100%;
-        }
-        .tb-cell{
-            display: table-cell;
-        }
+
         #btn_check {
             margin-right: 30px;
         }
@@ -89,7 +77,7 @@
     <div class="search-left col-sm-4 col-sm-offset-1 ">
         <div class="input-group">
             <input type="text" class="form-control" id="search-text"/>
-            <span class="input-group-btn">
+					<span class="input-group-btn">
 						<button class="btn btn-default" type="button" id="search-btn">
                             Go
                         </button>
@@ -156,8 +144,8 @@
                 <th>sId</th>
                 <th>memo</th>
                 <th>content</th>
-                <th>translation</th>
                 <th>answer</th>
+                <th>translation</th>
                 <th>tips</th>
                 <th>created_at</th>
                 <th>edit</th>
@@ -196,21 +184,11 @@
             </tr>
             <tr>
                 <td><label>content</label></td>
-                <td>
-                    <div class="tb-table full-width">
-                        <div class="tb-cell full-width">
-                            <input type="text" id="edit-content"/>
-                        </div>
-                        <button class="btn btn-info btn-answer-auto" type="button"
-                                id="btn-answer-auto">Generate Answer</button>
-                    </div>
-                </td>
+                <td><input type="text" id="edit-content"/></td>
             </tr>
             <tr>
                 <td><label>answer</label></td>
-                <td>
-                    <input type="text" id="edit-answer"/>
-                </td>
+                <td><input type="text" id="edit-answer"/></td>
             </tr>
             <tr>
                 <td><label>translation</label></td>
@@ -252,7 +230,7 @@
 <script type="text/javascript">
     var curQuestions;
     function checkSingQuestion(i) {
-        var maskRegexp = /\[([^\]]+)]/g;
+        var maskRegexp = /\[([\S]+)]/g;
         var matches = maskRegexp.exec(curQuestions[i]["content"]);
         if ($("#mask-" + i).length == 0 || (matches.length > 1 && $("#mask-" + i).val() == matches[1])) {
             $("#question-" + i).removeClass('danger');
@@ -281,17 +259,14 @@
             tr.append("<td>" + (index++) + "</td>");
             tr.append("<td>" + curQuestions[i]['sId'] + "</td>");
             tr.append("<td>" + curQuestions[i]['memo'] + "</td>");
-            var strQuest = curQuestions[i]['content'].replace(/\[[^\]]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
+            var strQuest = curQuestions[i]['content'].replace(/\[[\S]+]/g, " <input type=\"text\" id=\"mask-" + i + "\" class=\"mask\" /> ");
             tr.append("<td>" + strQuest + "</td>");
-            tr.append("<td>" + curQuestions[i]['translation'] + "</td>");
             //tr.append("<td>" + curQuestions[i]['answer'] + "</td>");
             tr.append("<td></td>");
+            tr.append("<td>" + curQuestions[i]['translation'] + "</td>");
             tr.append("<td>" + curQuestions[i]['tips'] + "</td>");
             tr.append("<td>" + curQuestions[i]['created_at'] + "</td>");
-            tr.append("<td>" +
-                "<button type=\"button\" class=\"btn btn-info btn-edit\" id=\"edit-" + i.toString() + "\">Edit</button>" +
-                " <button type=\"button\" class=\"btn btn-info btn-copy\" id=\"copy-" + i.toString() + "\">Copy</button>" +
-                "</td>");
+            tr.append("<td><button type=\"button\" class=\"btn btn-info btn-edit\" id=\"edit-" + i.toString() + "\">Edit</button></td>");
             $('#question-list').append(tr);
         }
 
@@ -324,18 +299,6 @@
         $('.btn-edit').click(function () {
             var index = $(this).attr('id').split('-')[1];
             $('#edit-sId').text(curQuestions[index]['sId']);
-            $('#edit-memo').val(curQuestions[index]['memo']);
-            $('#edit-content').val(curQuestions[index]['content']);
-            $('#edit-answer').val(curQuestions[index]['answer']);
-            $('#edit-translation').val(curQuestions[index]['translation']);
-            $('#edit-tips').val(curQuestions[index]['tips']);
-            $('#save_info').hide();
-        });
-
-        //click the copy button
-        $('.btn-copy').click(function () {
-            var index = $(this).attr('id').split('-')[1];
-            $('#edit-sId').text("");
             $('#edit-memo').val(curQuestions[index]['memo']);
             $('#edit-content').val(curQuestions[index]['content']);
             $('#edit-answer').val(curQuestions[index]['answer']);
@@ -465,15 +428,6 @@
 
 <!--new or modify a record-->
 <script type="text/javascript">
-    $('#btn-answer-auto').click(function () {
-        var str = $('#edit-content').val();
-        var patt = /\[([^\]]+)\]/i;
-        var result = str.match(patt);
-        if(result.length>=2){
-            $('#edit-answer').val(result[1]);
-        }
-
-    });
     $('#btn-ok').click(function () {
         var params = [
             {
@@ -493,8 +447,7 @@
                     $('#save_info').show();
                     $('#save_info').removeClass('alert-danger');
                     $('#save_info').addClass('alert-success');
-                    $('#save_info').text(jsonData[0]['succeed']['message']);
-                    $('#edit-sId').text(jsonData[0]['succeed']['id']);
+                    $('#save_info').text(jsonData[0]['succeed']);
                 } else if (typeof jsonData[0]['failed'] !== 'undefined') {
                     $('#save_info').show();
                     $('#save_info').removeClass('alert-success');

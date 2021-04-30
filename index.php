@@ -38,7 +38,10 @@
         .clear {
             clear: both;
         }
-
+        #from-date-ul{
+            max-height: 500px;
+            overflow: hidden;
+        }
         .pg-content {
             padding-top: 100px;
         }
@@ -53,10 +56,18 @@
             text-align: center;
         }
 
-        .table-edit input {
+        .table-edit td input {
             width: 100%;
         }
-
+        .tb-table{
+            display: table;
+        }
+        .full-width{
+            width: 100%;
+        }
+        .tb-cell{
+            display: table-cell;
+        }
         #btn_check {
             margin-right: 30px;
         }
@@ -77,7 +88,7 @@
     <div class="search-left col-sm-4 col-sm-offset-1 ">
         <div class="input-group">
             <input type="text" class="form-control" id="search-text"/>
-					<span class="input-group-btn">
+            <span class="input-group-btn">
 						<button class="btn btn-default" type="button" id="search-btn">
                             Go
                         </button>
@@ -184,7 +195,16 @@
             </tr>
             <tr>
                 <td><label>content</label></td>
-                <td><input type="text" id="edit-content"/></td>
+                <td>
+                    <div class="tb-table full-width">
+                        <div class="tb-cell full-width">
+                            <input type="text" id="edit-content"/>
+                        </div>
+                        <button class="btn btn-info btn-answer-auto" type="button"
+                                id="btn-answer-auto">Generate Answer
+                        </button>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <td><label>answer</label></td>
@@ -299,6 +319,18 @@
         $('.btn-edit').click(function () {
             var index = $(this).attr('id').split('-')[1];
             $('#edit-sId').text(curQuestions[index]['sId']);
+            $('#edit-memo').val(curQuestions[index]['memo']);
+            $('#edit-content').val(curQuestions[index]['content']);
+            $('#edit-answer').val(curQuestions[index]['answer']);
+            $('#edit-translation').val(curQuestions[index]['translation']);
+            $('#edit-tips').val(curQuestions[index]['tips']);
+            $('#save_info').hide();
+        });
+
+        //click the copy button
+        $('.btn-copy').click(function () {
+            var index = $(this).attr('id').split('-')[1];
+            $('#edit-sId').text("");
             $('#edit-memo').val(curQuestions[index]['memo']);
             $('#edit-content').val(curQuestions[index]['content']);
             $('#edit-answer').val(curQuestions[index]['answer']);
@@ -428,6 +460,15 @@
 
 <!--new or modify a record-->
 <script type="text/javascript">
+    $('#btn-answer-auto').click(function () {
+        var str = $('#edit-content').val();
+        var patt = /\[([^\]]+)\]/i;
+        var result = str.match(patt);
+        if(result.length>=2){
+            $('#edit-answer').val(result[1]);
+        }
+
+    })
     $('#btn-ok').click(function () {
         var params = [
             {
@@ -447,7 +488,8 @@
                     $('#save_info').show();
                     $('#save_info').removeClass('alert-danger');
                     $('#save_info').addClass('alert-success');
-                    $('#save_info').text(jsonData[0]['succeed']);
+                    $('#save_info').text(jsonData[0]['succeed']['message']);
+                    $('#edit-sId').text(jsonData[0]['succeed']['id']);
                 } else if (typeof jsonData[0]['failed'] !== 'undefined') {
                     $('#save_info').show();
                     $('#save_info').removeClass('alert-success');

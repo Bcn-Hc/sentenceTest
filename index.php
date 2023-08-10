@@ -40,7 +40,11 @@
         }
         #from-date-ul{
             max-height: 500px;
-            overflow: hidden;
+            overflow: auto;
+        }
+        #to-date-ul{
+            max-height: 500px;
+            overflow: auto;
         }
         .pg-content {
             padding-top: 100px;
